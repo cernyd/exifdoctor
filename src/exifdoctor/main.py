@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from exifdoctor.data import ImageData
+from exifdoctor.data.image_data import ImageData
 
 
 def main():
