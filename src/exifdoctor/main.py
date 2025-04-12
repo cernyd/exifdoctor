@@ -1,5 +1,13 @@
+from pathlib import Path
+
+from exifdoctor.data import ImageData
+
+
 def main():
-    print("Hello from exifdoctor!")
+    image_path = Path("images")
+
+    for img in image_path.glob("*.JPG"):
+        print(ImageData(img))
 
 
 if __name__ == "__main__":
