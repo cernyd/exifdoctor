@@ -72,7 +72,7 @@ def passthrough(data: str) -> str:
 
 
 TAG_MAP = {
-    "DateTimeOriginal": parse_datetime,
+    "DateTimeOriginal": parse_datetime_any,
     "OffsetTimeOriginal": parse_timezone,
     "DateTimeDigitized": parse_datetime,
     "OffsetTimeDigitized": parse_timezone,
