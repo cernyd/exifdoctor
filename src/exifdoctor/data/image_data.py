@@ -32,10 +32,9 @@ COMPOSITE_TAG_PROCESSORS = [parse_datetime_original, parse_datetime_digitized]
 class ImageData:
     def __init__(self, img_path: Path):
         self.img_path: Path = img_path
-        self.__exif_data_input = self.__load_exif_data(img_path)
-        self.__exif_data_transformed = self.transform_tags(self.__exif_data_input)
-        self.__composite_tags = self.extract_composite_tags(self.__exif_data_transformed)
-        pprint(self.__exif_data_transformed)
+        self.exif_data_raw = self.__load_exif_data(img_path)
+        self.exif_data_transformed = self.transform_tags(self.exif_data_raw)
+        self.exif_data_composite = self.extract_composite_tags(self.exif_data_transformed)
 
     def transform_tags(self, raw_tags: dict[str, Any]):
         tags = {}
