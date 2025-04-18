@@ -39,8 +39,6 @@ def parse_datetime_with_timezone(datetime_raw: str):
 
 
 def parse_datetime_subsec_with_timezone(datetime_raw: str):
-    print(datetime_raw)
-    print(len(datetime_raw))
     tz_start = -6
     date = parse_datetime_subsec(datetime_raw[:tz_start])
     timezone = parse_timezone(datetime_raw[tz_start:])
@@ -95,7 +93,8 @@ TAG_MAP = {
     "SubSecModifyDate": parse_datetime_any,
 
     "TrackCreateDate": parse_datetime_any,
-    "TrackModifyDate": parse_datetime_any
+    "TrackModifyDate": parse_datetime_any,
+    "DateTimeCreated": parse_datetime_any
 }
 
 
