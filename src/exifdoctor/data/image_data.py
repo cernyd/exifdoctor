@@ -1,7 +1,7 @@
 import datetime
 from pathlib import Path
 
-import piexif
+from exifdoctor.exiftool_wrapper import load_exif
 
 
 EXIF_DATETIME_FORMAT = "%Y:%m:%d %H:%M:%S"
@@ -20,29 +20,9 @@ class ImageData:
         self.img_path: Path = img_path
         self.__exif_data = self.__load_exif_data(img_path)
 
-        self.__print_exif_tags()
-        self.__print_gps_tags()
-
-        # exif_bytes = piexif.dump(exif_data)
-        # piexif.insert(exif_bytes, str(img.resolve()))
-
-    def __print_exif_tags(self):
-        print("Exif")
-        for key, value in self.__exif_data["Exif"].items():
-            print(f"\t{piexif.TAGS["Exif"][key]} = {value}")
-
     def __load_exif_data(self, img_path):
-        with img_path.open("rb") as img_file:
-            return piexif.load(img_file.read())
-
-    def __print_gps_tags(self):
-        print("GPS")
-        for key, value in self.__exif_data["GPS"].items():
-            print(f"\t{piexif.TAGS["GPS"][key]} = {value}")
-
-    @property
-    def __exif(self):
-        return self.__exif_data["Exif"]
+        data = load_exif(img_path)
+        return data[0]
 
     def parse_timezone(self, tzinfo: str):
         hours, minutes = tzinfo[1:].split(":")
@@ -55,20 +35,20 @@ class ImageData:
 
     @property
     def datetime_original(self):
-        datetime_original = parse_datetime(self.__exif.get(piexif.ExifIFD.DateTimeOriginal).decode())
+        datetime_original = parse_datetime(self.__exif_data["DateTimeOriginal"])
 
-        raw_timezone = self.__exif.get(piexif.ExifIFD.OffsetTimeOriginal)
+        raw_timezone = self.__exif_data.get("OffsetTimeOriginal")
         if raw_timezone is not None:
-            timezone = self.parse_timezone(raw_timezone.decode())
+            timezone = self.parse_timezone(raw_timezone)
             datetime_original = datetime_original.replace(tzinfo=timezone)
 
         return datetime_original
 
     @property
     def datetime_digitized(self):
-        datetime_digitized = parse_datetime(self.__exif.get(piexif.ExifIFD.DateTimeDigitized).decode())
+        datetime_digitized = parse_datetime(self.__exif_data["DateTimeDigitized"])
 
-        raw_timezone = self.__exif.get(piexif.ExifIFD.OffsetTimeDigitized)
+        raw_timezone = self.__exif_data.get("OffsetTimeDigitized")
         if raw_timezone is not None:
             timezone = self.parse_timezone(raw_timezone.decode())
             datetime_digitized = datetime_digitized.replace(tzinfo=timezone)
