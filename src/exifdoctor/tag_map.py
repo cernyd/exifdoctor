@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 
 EXIF_DATETIME_FORMAT = "%Y:%m:%d %H:%M:%S"
@@ -100,3 +101,26 @@ TAG_MAP = {
 
 def transform_tag(tag: str, value: str) -> str:
     return TAG_MAP.get(tag, passthrough)(value)
+
+
+def parse_datetime_original(data: dict[str, Any]) -> Any:
+    datetime_original = data["DateTimeOriginal"]
+
+    timezone = data.get("OffsetTimeOriginal")
+    if timezone is not None:
+        datetime_original = datetime_original.replace(tzinfo=timezone)
+
+    return "DateTimeOriginal", datetime_original
+
+
+def parse_datetime_digitized(data: dict[str, Any]) -> Any:
+    datetime_digitized = data["DateTimeDigitized"]
+
+    timezone = data.get("OffsetTimeDigitzed")
+    if timezone is not None:
+        datetime_digitized = datetime_digitized.replace(tzinfo=timezone)
+
+    return "DateTimeDigitized", datetime_digitized
+
+
+COMPOSITE_TAG_PROCESSORS = [parse_datetime_original, parse_datetime_digitized]

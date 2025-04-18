@@ -1,32 +1,9 @@
+from collections import defaultdict
 from pathlib import Path
-from pprint import pprint
 from typing import Any
 
 from exifdoctor.exiftool_wrapper import load_exif
-from exifdoctor.tag_map import transform_tag
-
-
-def parse_datetime_original(data: dict[str, Any]) -> Any:
-    datetime_original = data["DateTimeOriginal"]
-
-    timezone = data.get("OffsetTimeOriginal")
-    if timezone is not None:
-        datetime_original = datetime_original.replace(tzinfo=timezone)
-
-    return "DateTimeOriginal", datetime_original
-
-
-def parse_datetime_digitized(data: dict[str, Any]) -> Any:
-    datetime_digitized = data["DateTimeDigitized"]
-
-    timezone = data.get("OffsetTimeDigitzed")
-    if timezone is not None:
-        datetime_digitized = datetime_digitized.replace(tzinfo=timezone)
-
-    return "DateTimeDigitized", datetime_digitized
-
-
-COMPOSITE_TAG_PROCESSORS = [parse_datetime_original, parse_datetime_digitized]
+from exifdoctor.tag_map import COMPOSITE_TAG_PROCESSORS, transform_tag
 
 
 class ImageData:
@@ -35,6 +12,7 @@ class ImageData:
         self.exif_data_raw = self.__load_exif_data(img_path)
         self.exif_data_transformed = self.transform_tags(self.exif_data_raw)
         self.exif_data_composite = self.extract_composite_tags(self.exif_data_transformed)
+        self.exif_data_edits = defaultdict(list)
 
     def transform_tags(self, raw_tags: dict[str, Any]):
         tags = {}
