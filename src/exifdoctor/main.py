@@ -1,13 +1,17 @@
 import glob
 from pathlib import Path
 
+import click
+
 from exifdoctor.data.image_data import ImageData
 
 
-def main():
-    image_path = Path("images")
+@click.command()
+@click.option("--path", type=click.Path(exists=True))
+def main(path: str):
+    media_path = Path(path)
 
-    for img in glob.glob(str(image_path / "**"), recursive=True):
+    for img in glob.glob(str(media_path / "**"), recursive=True):
         img = Path(img)
         try:
             if img.is_file():
