@@ -17,7 +17,6 @@ def main(path: str):
             if img.is_file():
                 print(ImageData(img))
         except Exception as e:
-            print(e)
             print(f"Failed to extract {img.resolve()}")
 
 
